@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.9.000">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="9.9.000" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="read_csv" compatibility="9.9.000" expanded="true" height="68" name="Read CSV (Train)" width="90" x="179" y="34">
+        <parameter key="csv_file" value="C:/Users/Darren Lee/Documents/RapidMiner/Repositories/USM/Process/CDS513_ASSIGN_01/data/cds513_a1_ratings_train_sort.csv"/>
+        <parameter key="column_separators" value=","/>
+        <parameter key="trim_lines" value="true"/>
+        <parameter key="use_quotes" value="true"/>
+        <parameter key="quotes_character" value="&quot;"/>
+        <parameter key="escape_character" value="\"/>
+        <parameter key="skip_comments" value="false"/>
+        <parameter key="comment_characters" value="#"/>
+        <parameter key="starting_row" value="1"/>
+        <parameter key="parse_numbers" value="true"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+        <parameter key="infinity_representation" value=""/>
+        <parameter key="date_format" value=""/>
+        <parameter key="first_row_as_names" value="true"/>
+        <list key="annotations"/>
+        <parameter key="time_zone" value="SYSTEM"/>
+        <parameter key="locale" value="English (United States)"/>
+        <parameter key="encoding" value="SYSTEM"/>
+        <parameter key="read_all_values_as_polynominal" value="false"/>
+        <list key="data_set_meta_data_information"/>
+        <parameter key="read_not_matching_values_as_missings" value="true"/>
+        <description align="center" color="transparent" colored="false" width="126">Read ratings data from training data file.</description>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.9.000" expanded="true" height="68" name="Store (Train)" width="90" x="447" y="34">
+        <parameter key="repository_entry" value="../data/cds513_a1_ratings_train_sort"/>
+        <description align="center" color="transparent" colored="false" width="126">Store training ratings data as IOO file.</description>
+      </operator>
+      <operator activated="true" class="read_csv" compatibility="9.9.000" expanded="true" height="68" name="Read CSV (Test)" width="90" x="179" y="187">
+        <parameter key="csv_file" value="C:/Users/Darren Lee/Documents/RapidMiner/Repositories/USM/Process/CDS513_ASSIGN_01/data/cds513_a1_ratings_test_sort.csv"/>
+        <parameter key="column_separators" value=","/>
+        <parameter key="trim_lines" value="false"/>
+        <parameter key="use_quotes" value="true"/>
+        <parameter key="quotes_character" value="&quot;"/>
+        <parameter key="escape_character" value="\"/>
+        <parameter key="skip_comments" value="false"/>
+        <parameter key="comment_characters" value="#"/>
+        <parameter key="starting_row" value="1"/>
+        <parameter key="parse_numbers" value="true"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+        <parameter key="infinity_representation" value=""/>
+        <parameter key="date_format" value=""/>
+        <parameter key="first_row_as_names" value="true"/>
+        <list key="annotations"/>
+        <parameter key="time_zone" value="SYSTEM"/>
+        <parameter key="locale" value="English (United States)"/>
+        <parameter key="encoding" value="SYSTEM"/>
+        <parameter key="read_all_values_as_polynominal" value="false"/>
+        <list key="data_set_meta_data_information"/>
+        <parameter key="read_not_matching_values_as_missings" value="true"/>
+        <description align="center" color="transparent" colored="false" width="126">Read ratings data from test data file.</description>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.9.000" expanded="true" height="68" name="Store (Test)" width="90" x="447" y="187">
+        <parameter key="repository_entry" value="../data/cds513_a1_ratings_test_sort"/>
+        <description align="center" color="transparent" colored="false" width="126">Store test ratings data as IOO file.</description>
+      </operator>
+      <operator activated="true" class="read_csv" compatibility="9.9.000" expanded="true" height="68" name="Read CSV (Genre)" width="90" x="179" y="340">
+        <parameter key="csv_file" value="C:/Users/Darren Lee/Documents/RapidMiner/Repositories/USM/Process/CDS513_ASSIGN_01/data/cds513_a1_movies_genre.csv"/>
+        <parameter key="column_separators" value=","/>
+        <parameter key="trim_lines" value="false"/>
+        <parameter key="use_quotes" value="true"/>
+        <parameter key="quotes_character" value="&quot;"/>
+        <parameter key="escape_character" value="\"/>
+        <parameter key="skip_comments" value="false"/>
+        <parameter key="comment_characters" value="#"/>
+        <parameter key="starting_row" value="1"/>
+        <parameter key="parse_numbers" value="true"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+        <parameter key="infinity_representation" value=""/>
+        <parameter key="date_format" value=""/>
+        <parameter key="first_row_as_names" value="true"/>
+        <list key="annotations"/>
+        <parameter key="time_zone" value="SYSTEM"/>
+        <parameter key="locale" value="English (United States)"/>
+        <parameter key="encoding" value="SYSTEM"/>
+        <parameter key="read_all_values_as_polynominal" value="false"/>
+        <list key="data_set_meta_data_information"/>
+        <parameter key="read_not_matching_values_as_missings" value="true"/>
+        <description align="center" color="transparent" colored="false" width="126">Read data from movie genre file.</description>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.9.000" expanded="true" height="68" name="Store (Genre)" width="90" x="447" y="340">
+        <parameter key="repository_entry" value="../data/cds513_a1_movies_genre"/>
+        <description align="center" color="transparent" colored="false" width="126">Store movie genre data as IOO file.</description>
+      </operator>
+      <operator activated="true" class="read_csv" compatibility="9.9.000" expanded="true" height="68" name="Read CSV (Personality)" width="90" x="179" y="493">
+        <parameter key="csv_file" value="C:/Users/Darren Lee/Documents/RapidMiner/Repositories/USM/Process/CDS513_ASSIGN_01/data/cds513_a1_user_personality.csv"/>
+        <parameter key="column_separators" value=","/>
+        <parameter key="trim_lines" value="false"/>
+        <parameter key="use_quotes" value="true"/>
+        <parameter key="quotes_character" value="&quot;"/>
+        <parameter key="escape_character" value="\"/>
+        <parameter key="skip_comments" value="false"/>
+        <parameter key="comment_characters" value="#"/>
+        <parameter key="starting_row" value="1"/>
+        <parameter key="parse_numbers" value="true"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+        <parameter key="infinity_representation" value=""/>
+        <parameter key="date_format" value=""/>
+        <parameter key="first_row_as_names" value="true"/>
+        <list key="annotations"/>
+        <parameter key="time_zone" value="SYSTEM"/>
+        <parameter key="locale" value="English (United States)"/>
+        <parameter key="encoding" value="SYSTEM"/>
+        <parameter key="read_all_values_as_polynominal" value="false"/>
+        <list key="data_set_meta_data_information"/>
+        <parameter key="read_not_matching_values_as_missings" value="true"/>
+        <description align="center" color="transparent" colored="false" width="126">Read data from user personality file.</description>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.9.000" expanded="true" height="68" name="Store (Personality)" width="90" x="447" y="493">
+        <parameter key="repository_entry" value="../data/cds513_a1_user_personality"/>
+        <description align="center" color="transparent" colored="false" width="126">Store user personality data as IOO file.</description>
+      </operator>
+      <connect from_op="Read CSV (Train)" from_port="output" to_op="Store (Train)" to_port="input"/>
+      <connect from_op="Read CSV (Test)" from_port="output" to_op="Store (Test)" to_port="input"/>
+      <connect from_op="Read CSV (Genre)" from_port="output" to_op="Store (Genre)" to_port="input"/>
+      <connect from_op="Read CSV (Personality)" from_port="output" to_op="Store (Personality)" to_port="input"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+    </process>
+  </operator>
+</process>

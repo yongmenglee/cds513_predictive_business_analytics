@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.9.000">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="9.9.000" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="9.9.000" expanded="true" height="68" name="Retrieve (Train)" width="90" x="45" y="85">
+        <parameter key="repository_entry" value="../../data/cds513_a1_ratings_train_sort"/>
+        <description align="center" color="transparent" colored="false" width="126">Retrieve training ratings data from IOO file.</description>
+      </operator>
+      <operator activated="true" class="retrieve" compatibility="9.9.000" expanded="true" height="68" name="Retrieve (Test)" width="90" x="45" y="340">
+        <parameter key="repository_entry" value="../../data/cds513_a1_ratings_test_sort"/>
+        <description align="center" color="transparent" colored="false" width="126">Retrieve test ratings data from IOO file.</description>
+      </operator>
+      <operator activated="true" class="set_macro" compatibility="9.9.000" expanded="true" height="103" name="Set Macro" width="90" x="246" y="187">
+        <parameter key="macro" value="weekdays"/>
+        <parameter key="value" value="1"/>
+        <description align="center" color="transparent" colored="false" width="126">Set macro value:&lt;br&gt;* 1: weekdays&lt;br&gt;* 2: weekends (Sundays)</description>
+      </operator>
+      <operator activated="true" class="subprocess" compatibility="9.9.000" expanded="true" height="103" name="Prepare Test (2)" width="90" x="447" y="340">
+        <process expanded="true">
+          <operator activated="true" class="nominal_to_date" compatibility="9.9.000" expanded="true" height="82" name="Nominal to Date (2)" width="90" x="179" y="34">
+            <parameter key="attribute_name" value="timestamp"/>
+            <parameter key="date_type" value="date_time"/>
+            <parameter key="date_format" value="yyyy-MM-dd HH:mm:ss "/>
+            <parameter key="time_zone" value="SYSTEM"/>
+            <parameter key="locale" value="English (United States)"/>
+            <parameter key="keep_old_attribute" value="true"/>
+            <description align="center" color="transparent" colored="false" width="126">Convert 'timestamp' values from string to date format.&lt;br&gt;</description>
+          </operator>
+          <operator activated="true" class="date_to_numerical" compatibility="9.9.000" expanded="true" height="82" name="Date to Numerical (2)" width="90" x="313" y="34">
+            <parameter key="attribute_name" value="timestamp"/>
+            <parameter key="time_unit" value="day"/>
+            <parameter key="millisecond_relative_to" value="second"/>
+            <parameter key="second_relative_to" value="minute"/>
+            <parameter key="minute_relative_to" value="hour"/>
+            <parameter key="hour_relative_to" value="day"/>
+            <parameter key="day_relative_to" value="week"/>
+            <parameter key="week_relative_to" value="year"/>
+            <parameter key="month_relative_to" value="year"/>
+            <parameter key="quarter_relative_to" value="year"/>
+            <parameter key="half_year_relative_to" value="year"/>
+            <parameter key="year_relative_to" value="era"/>
+            <parameter key="keep_old_attribute" value="false"/>
+            <description align="center" color="transparent" colored="false" width="126">Extract days of week from 'timestamp' values.&lt;br&gt;</description>
+          </operator>
+          <operator activated="true" class="select_subprocess" compatibility="9.9.000" expanded="true" height="82" name="Select Subprocess" width="90" x="514" y="34">
+            <parameter key="select_which" value="%{weekdays}"/>
+            <process expanded="true">
+              <operator activated="true" class="filter_examples" compatibility="9.9.000" expanded="true" height="103" name="Filter Examples (3)" width="90" x="246" y="34">
+                <parameter key="parameter_expression" value=""/>
+                <parameter key="condition_class" value="custom_filters"/>
+                <parameter key="invert_filter" value="false"/>
+                <list key="filters_list">
+                  <parameter key="filters_entry_key" value="timestamp.ne.1"/>
+                </list>
+                <parameter key="filters_logic_and" value="true"/>
+                <parameter key="filters_check_metadata" value="true"/>
+                <description align="center" color="transparent" colored="false" width="126">Filter by removing examples with timestamp from weekends (Sundays) - keep ratings from weekdays only.</description>
+              </operator>
+              <connect from_port="input 1" to_op="Filter Examples (3)" to_port="example set input"/>
+              <connect from_op="Filter Examples (3)" from_port="example set output" to_port="output 1"/>
+              <portSpacing port="source_input 1" spacing="0"/>
+              <portSpacing port="source_input 2" spacing="0"/>
+              <portSpacing port="sink_output 1" spacing="0"/>
+              <portSpacing port="sink_output 2" spacing="0"/>
+            </process>
+            <process expanded="true">
+              <operator activated="true" class="filter_examples" compatibility="9.9.000" expanded="true" height="103" name="Filter Examples (4)" width="90" x="313" y="34">
+                <parameter key="parameter_expression" value=""/>
+                <parameter key="condition_class" value="custom_filters"/>
+                <parameter key="invert_filter" value="false"/>
+                <list key="filters_list">
+                  <parameter key="filters_entry_key" value="timestamp.eq.1"/>
+                </list>
+                <parameter key="filters_logic_and" value="true"/>
+                <parameter key="filters_check_metadata" value="true"/>
+                <description align="center" color="transparent" colored="false" width="126">Filter by removing examples with timestamp from weekdays - keep ratings from weekends (Sundays) only.</description>
+              </operator>
+              <connect from_port="input 1" to_op="Filter Examples (4)" to_port="example set input"/>
+              <connect from_op="Filter Examples (4)" from_port="example set output" to_port="output 1"/>
+              <portSpacing port="source_input 1" spacing="0"/>
+              <portSpacing port="source_input 2" spacing="0"/>
+              <portSpacing port="sink_output 1" spacing="0"/>
+              <portSpacing port="sink_output 2" spacing="0"/>
+            </process>
+            <description align="center" color="transparent" colored="false" width="126">Filter examples based on the value of 'weekdays' macro.&lt;br&gt;* 1: weekdays&lt;br&gt;* 2: weekends (Sunday)</description>
+          </operator>
+          <operator activated="true" class="select_attributes" compatibility="9.9.000" expanded="true" height="82" name="Sel Attr (Train) (2)" width="90" x="715" y="136">
+            <parameter key="attribute_filter_type" value="subset"/>
+            <parameter key="attribute" value=""/>
+            <parameter key="attributes" value="movie_id|rating|user_id"/>
+            <parameter key="use_except_expression" value="false"/>
+            <parameter key="value_type" value="attribute_value"/>
+            <parameter key="use_value_type_exception" value="false"/>
+            <parameter key="except_value_type" value="time"/>
+            <parameter key="block_type" value="attribute_block"/>
+            <parameter key="use_block_type_exception" value="false"/>
+            <parameter key="except_block_type" value="value_matrix_row_start"/>
+            <parameter key="invert_selection" value="false"/>
+            <parameter key="include_special_attributes" value="false"/>
+            <description align="center" color="transparent" colored="false" width="126">Select relevant attributes: user_id, movie_id, rating</description>
+          </operator>
+          <operator activated="true" class="set_role" compatibility="9.9.000" expanded="true" height="82" name="Set Role (Train) (2)" width="90" x="849" y="136">
+            <parameter key="attribute_name" value="user_id"/>
+            <parameter key="target_role" value="user identification"/>
+            <list key="set_additional_roles">
+              <parameter key="movie_id" value="item identification"/>
+            </list>
+            <description align="center" color="transparent" colored="false" width="126">Set roles:&lt;br&gt;- user_id: user identification&lt;br&gt;- movie_id: item identification</description>
+          </operator>
+          <operator activated="true" class="multiply" compatibility="9.9.000" expanded="true" height="103" name="Multiply (2)" width="90" x="1050" y="136">
+            <description align="center" color="transparent" colored="false" width="126">Create multiple copies of the test data.</description>
+          </operator>
+          <connect from_port="in 1" to_op="Nominal to Date (2)" to_port="example set input"/>
+          <connect from_op="Nominal to Date (2)" from_port="example set output" to_op="Date to Numerical (2)" to_port="example set input"/>
+          <connect from_op="Date to Numerical (2)" from_port="example set output" to_op="Select Subprocess" to_port="input 1"/>
+          <connect from_op="Select Subprocess" from_port="output 1" to_op="Sel Attr (Train) (2)" to_port="example set input"/>
+          <connect from_op="Sel Attr (Train) (2)" from_port="example set output" to_op="Set Role (Train) (2)" to_port="example set input"/>
+          <connect from_op="Set Role (Train) (2)" from_port="example set output" to_op="Multiply (2)" to_port="input"/>
+          <connect from_op="Multiply (2)" from_port="output 1" to_port="out 1"/>
+          <connect from_op="Multiply (2)" from_port="output 2" to_port="out 2"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="source_in 2" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+          <portSpacing port="sink_out 3" spacing="0"/>
+        </process>
+        <description align="center" color="transparent" colored="false" width="126">Select user_id, movie_id, and ratings from test data; set roles for user_id and movie_id.</description>
+      </operator>
+      <operator activated="true" class="subprocess" compatibility="9.9.000" expanded="true" height="82" name="Prepare Train" width="90" x="447" y="85">
+        <process expanded="true">
+          <operator activated="true" class="nominal_to_date" compatibility="9.9.000" expanded="true" height="82" name="Nominal to Date" width="90" x="179" y="34">
+            <parameter key="attribute_name" value="timestamp"/>
+            <parameter key="date_type" value="date_time"/>
+            <parameter key="date_format" value="yyyy-MM-dd HH:mm:ss "/>
+            <parameter key="time_zone" value="SYSTEM"/>
+            <parameter key="locale" value="English (United States)"/>
+            <parameter key="keep_old_attribute" value="true"/>
+            <description align="center" color="transparent" colored="false" width="126">Convert 'timestamp' values from string to date format.&lt;br&gt;</description>
+          </operator>
+          <operator activated="true" class="date_to_numerical" compatibility="9.9.000" expanded="true" height="82" name="Date to Numerical" width="90" x="380" y="34">
+            <parameter key="attribute_name" value="timestamp"/>
+            <parameter key="time_unit" value="day"/>
+            <parameter key="millisecond_relative_to" value="second"/>
+            <parameter key="second_relative_to" value="minute"/>
+            <parameter key="minute_relative_to" value="hour"/>
+            <parameter key="hour_relative_to" value="day"/>
+            <parameter key="day_relative_to" value="week"/>
+            <parameter key="week_relative_to" value="year"/>
+            <parameter key="month_relative_to" value="year"/>
+            <parameter key="quarter_relative_to" value="year"/>
+            <parameter key="half_year_relative_to" value="year"/>
+            <parameter key="year_relative_to" value="era"/>
+            <parameter key="keep_old_attribute" value="false"/>
+            <description align="center" color="transparent" colored="false" width="126">Extract days of week from 'timestamp' values.&lt;br&gt;</description>
+          </operator>
+          <operator activated="true" class="select_subprocess" compatibility="9.9.000" expanded="true" height="82" name="Select Subprocess (2)" width="90" x="581" y="34">
+            <parameter key="select_which" value="%{weekdays}"/>
+            <process expanded="true">
+              <operator activated="true" class="filter_examples" compatibility="9.9.000" expanded="true" height="103" name="Filter Examples" width="90" x="246" y="34">
+                <parameter key="parameter_expression" value=""/>
+                <parameter key="condition_class" value="custom_filters"/>
+                <parameter key="invert_filter" value="false"/>
+                <list key="filters_list">
+                  <parameter key="filters_entry_key" value="timestamp.ne.1"/>
+                </list>
+                <parameter key="filters_logic_and" value="true"/>
+                <parameter key="filters_check_metadata" value="true"/>
+                <description align="center" color="transparent" colored="false" width="126">Filter by removing examples with timestamp from weekends (Sundays) - keep ratings from weekdays only.&lt;br&gt;</description>
+              </operator>
+              <connect from_port="input 1" to_op="Filter Examples" to_port="example set input"/>
+              <connect from_op="Filter Examples" from_port="example set output" to_port="output 1"/>
+              <portSpacing port="source_input 1" spacing="0"/>
+              <portSpacing port="source_input 2" spacing="0"/>
+              <portSpacing port="sink_output 1" spacing="0"/>
+              <portSpacing port="sink_output 2" spacing="0"/>
+            </process>
+            <process expanded="true">
+              <operator activated="true" class="filter_examples" compatibility="9.9.000" expanded="true" height="103" name="Filter Examples (2)" width="90" x="313" y="34">
+                <parameter key="parameter_expression" value=""/>
+                <parameter key="condition_class" value="custom_filters"/>
+                <parameter key="invert_filter" value="false"/>
+                <list key="filters_list">
+                  <parameter key="filters_entry_key" value="timestamp.eq.1"/>
+                </list>
+                <parameter key="filters_logic_and" value="true"/>
+                <parameter key="filters_check_metadata" value="true"/>
+                <description align="center" color="transparent" colored="false" width="126">Filter by removing examples with timestamp from weekdays - keep ratings from weekends (Sundays) only.</description>
+              </operator>
+              <connect from_port="input 1" to_op="Filter Examples (2)" to_port="example set input"/>
+              <connect from_op="Filter Examples (2)" from_port="example set output" to_port="output 1"/>
+              <portSpacing port="source_input 1" spacing="0"/>
+              <portSpacing port="source_input 2" spacing="0"/>
+              <portSpacing port="sink_output 1" spacing="0"/>
+              <portSpacing port="sink_output 2" spacing="0"/>
+            </process>
+            <description align="center" color="transparent" colored="false" width="126">Filter examples based on the value of 'weekdays' macro.&lt;br&gt;* 1: weekdays&lt;br&gt;* 2: weekends (Sunday)</description>
+          </operator>
+          <operator activated="true" class="select_attributes" compatibility="9.9.000" expanded="true" height="82" name="Sel Attr (Train)" width="90" x="782" y="136">
+            <parameter key="attribute_filter_type" value="subset"/>
+            <parameter key="attribute" value=""/>
+            <parameter key="attributes" value="movie_id|rating|user_id"/>
+            <parameter key="use_except_expression" value="false"/>
+            <parameter key="value_type" value="attribute_value"/>
+            <parameter key="use_value_type_exception" value="false"/>
+            <parameter key="except_value_type" value="time"/>
+            <parameter key="block_type" value="attribute_block"/>
+            <parameter key="use_block_type_exception" value="false"/>
+            <parameter key="except_block_type" value="value_matrix_row_start"/>
+            <parameter key="invert_selection" value="false"/>
+            <parameter key="include_special_attributes" value="false"/>
+            <description align="center" color="transparent" colored="false" width="126">Select relevant attributes: user_id, movie_id, rating</description>
+          </operator>
+          <operator activated="true" class="set_role" compatibility="9.9.000" expanded="true" height="82" name="Set Role (Train)" width="90" x="983" y="136">
+            <parameter key="attribute_name" value="user_id"/>
+            <parameter key="target_role" value="user identification"/>
+            <list key="set_additional_roles">
+              <parameter key="movie_id" value="item identification"/>
+            </list>
+            <description align="center" color="transparent" colored="false" width="126">Set roles:&lt;br&gt;- user_id: user identification&lt;br&gt;- movie_id: item identification</description>
+          </operator>
+          <connect from_port="in 1" to_op="Nominal to Date" to_port="example set input"/>
+          <connect from_op="Nominal to Date" from_port="example set output" to_op="Date to Numerical" to_port="example set input"/>
+          <connect from_op="Date to Numerical" from_port="example set output" to_op="Select Subprocess (2)" to_port="input 1"/>
+          <connect from_op="Select Subprocess (2)" from_port="output 1" to_op="Sel Attr (Train)" to_port="example set input"/>
+          <connect from_op="Sel Attr (Train)" from_port="example set output" to_op="Set Role (Train)" to_port="example set input"/>
+          <connect from_op="Set Role (Train)" from_port="example set output" to_port="out 1"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="source_in 2" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+        </process>
+        <description align="center" color="transparent" colored="false" width="126">Select user_id, movie_id, and ratings from training data; set roles for user_id and movie_id.</description>
+      </operator>
+      <operator activated="true" class="irbrecommender:item_k-NN" compatibility="5.1.002" expanded="true" height="82" name="Item k-NN" width="90" x="648" y="442">
+        <parameter key="k" value="20"/>
+        <parameter key="Weighted Knn" value="true"/>
+        <description align="center" color="transparent" colored="false" width="126">Item-based Collaborative Filtering RS.</description>
+      </operator>
+      <operator activated="true" class="irbrecommender:apply_model_ir" compatibility="5.1.002" expanded="true" height="82" name="Apply Model" width="90" x="849" y="187">
+        <parameter key="n" value="100"/>
+        <parameter key="Online updates" value="false"/>
+        <description align="center" color="transparent" colored="false" width="126">Apply test data to the user-based CF RS.</description>
+      </operator>
+      <operator activated="true" class="irbrecommender:performance_item_recommendation" compatibility="5.1.002" expanded="true" height="103" name="Performance" width="90" x="1050" y="340">
+        <description align="center" color="transparent" colored="false" width="126">Evaluate the performance of the user-based CF RS using training and test data.</description>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="9.9.000" expanded="true" height="103" name="Multiply Result" width="90" x="1050" y="34"/>
+      <operator activated="true" class="write_csv" compatibility="9.9.000" expanded="true" height="82" name="Write Result to CSV" width="90" x="1050" y="187">
+        <parameter key="csv_file" value="C:/Users/Darren Lee/Documents/RapidMiner/Repositories/USM/Process/CDS513_ASSIGN_01/output/01_Process_04_output_%{weekdays}.csv"/>
+        <parameter key="column_separator" value=","/>
+        <parameter key="write_attribute_names" value="true"/>
+        <parameter key="quote_nominal_values" value="true"/>
+        <parameter key="format_date_attributes" value="true"/>
+        <parameter key="append_to_file" value="false"/>
+        <parameter key="encoding" value="SYSTEM"/>
+      </operator>
+      <connect from_op="Retrieve (Train)" from_port="output" to_op="Set Macro" to_port="through 1"/>
+      <connect from_op="Retrieve (Test)" from_port="output" to_op="Set Macro" to_port="through 2"/>
+      <connect from_op="Set Macro" from_port="through 1" to_op="Prepare Train" to_port="in 1"/>
+      <connect from_op="Set Macro" from_port="through 2" to_op="Prepare Test (2)" to_port="in 1"/>
+      <connect from_op="Prepare Test (2)" from_port="out 1" to_op="Apply Model" to_port="query set"/>
+      <connect from_op="Prepare Test (2)" from_port="out 2" to_op="Performance" to_port="test set"/>
+      <connect from_op="Prepare Train" from_port="out 1" to_op="Item k-NN" to_port="example set"/>
+      <connect from_op="Item k-NN" from_port="example set" to_op="Performance" to_port="train set"/>
+      <connect from_op="Item k-NN" from_port="Model" to_op="Apply Model" to_port="Model"/>
+      <connect from_op="Apply Model" from_port="result set" to_op="Multiply Result" to_port="input"/>
+      <connect from_op="Apply Model" from_port="Model" to_op="Performance" to_port="Model"/>
+      <connect from_op="Performance" from_port="performance" to_port="result 2"/>
+      <connect from_op="Performance" from_port="evaluation measures" to_port="result 3"/>
+      <connect from_op="Multiply Result" from_port="output 1" to_port="result 1"/>
+      <connect from_op="Multiply Result" from_port="output 2" to_op="Write Result to CSV" to_port="input"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+      <portSpacing port="sink_result 4" spacing="0"/>
+    </process>
+  </operator>
+</process>

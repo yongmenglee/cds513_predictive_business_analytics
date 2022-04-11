@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.9.000">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="9.9.000" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="9.9.000" expanded="true" height="68" name="Retrieve Train" width="90" x="45" y="34">
+        <parameter key="repository_entry" value="../data/train_oct"/>
+      </operator>
+      <operator activated="true" class="retrieve" compatibility="9.9.000" expanded="true" height="68" name="Retrieve Test" width="90" x="45" y="136">
+        <parameter key="repository_entry" value="../data/test_oct"/>
+      </operator>
+      <operator activated="true" class="set_role" compatibility="9.9.000" expanded="true" height="82" name="Set Role Train" width="90" x="179" y="34">
+        <parameter key="attribute_name" value="user_id"/>
+        <parameter key="target_role" value="user identification"/>
+        <list key="set_additional_roles">
+          <parameter key="product_id" value="item identification"/>
+        </list>
+      </operator>
+      <operator activated="true" class="set_role" compatibility="9.9.000" expanded="true" height="82" name="Set Role Test" width="90" x="179" y="136">
+        <parameter key="attribute_name" value="user_id"/>
+        <parameter key="target_role" value="user identification"/>
+        <list key="set_additional_roles">
+          <parameter key="product_id" value="item identification"/>
+        </list>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="9.9.000" expanded="true" height="103" name="Multiply" width="90" x="313" y="136"/>
+      <operator activated="true" class="set_macro" compatibility="9.9.000" expanded="true" height="82" name="Set Macro" width="90" x="313" y="34">
+        <parameter key="macro" value="k"/>
+        <parameter key="value" value="400"/>
+      </operator>
+      <operator activated="true" class="irbrecommender:user_k-NN" compatibility="5.1.002" expanded="true" height="82" name="User k-NN" width="90" x="447" y="34">
+        <parameter key="k" value="%{k}"/>
+        <parameter key="Weighted Knn" value="true"/>
+      </operator>
+      <operator activated="true" class="irbrecommender:apply_model_ir" compatibility="5.1.002" expanded="true" height="82" name="Apply Model" width="90" x="581" y="136">
+        <parameter key="n" value="100"/>
+        <parameter key="Online updates" value="false"/>
+      </operator>
+      <operator activated="true" class="write_csv" compatibility="9.9.000" expanded="true" height="82" name="Write Result to CSV" width="90" x="849" y="136">
+        <parameter key="csv_file" value="C:/Users/Darren Lee/Documents/RapidMiner/Repositories/USM/Process/CDS513_PROJECT_RS/output/01_user_rs_output_k_%{k}.csv"/>
+        <parameter key="column_separator" value=","/>
+        <parameter key="write_attribute_names" value="true"/>
+        <parameter key="quote_nominal_values" value="true"/>
+        <parameter key="format_date_attributes" value="true"/>
+        <parameter key="append_to_file" value="false"/>
+        <parameter key="encoding" value="SYSTEM"/>
+      </operator>
+      <operator activated="true" class="irbrecommender:performance_item_recommendation" compatibility="5.1.002" expanded="true" height="103" name="Performance" width="90" x="715" y="34"/>
+      <operator activated="true" class="store" compatibility="9.9.000" expanded="true" height="68" name="Store" width="90" x="849" y="34">
+        <parameter key="repository_entry" value="../output/01_user_rs_performance_k_%{k}"/>
+      </operator>
+      <connect from_op="Retrieve Train" from_port="output" to_op="Set Role Train" to_port="example set input"/>
+      <connect from_op="Retrieve Test" from_port="output" to_op="Set Role Test" to_port="example set input"/>
+      <connect from_op="Set Role Train" from_port="example set output" to_op="Set Macro" to_port="through 1"/>
+      <connect from_op="Set Role Test" from_port="example set output" to_op="Multiply" to_port="input"/>
+      <connect from_op="Multiply" from_port="output 1" to_op="Apply Model" to_port="query set"/>
+      <connect from_op="Multiply" from_port="output 2" to_op="Performance" to_port="test set"/>
+      <connect from_op="Set Macro" from_port="through 1" to_op="User k-NN" to_port="example set"/>
+      <connect from_op="User k-NN" from_port="Model" to_op="Apply Model" to_port="Model"/>
+      <connect from_op="User k-NN" from_port="example set" to_op="Performance" to_port="train set"/>
+      <connect from_op="Apply Model" from_port="result set" to_op="Write Result to CSV" to_port="input"/>
+      <connect from_op="Apply Model" from_port="Model" to_op="Performance" to_port="Model"/>
+      <connect from_op="Write Result to CSV" from_port="through" to_port="result 3"/>
+      <connect from_op="Performance" from_port="performance" to_op="Store" to_port="input"/>
+      <connect from_op="Performance" from_port="evaluation measures" to_port="result 2"/>
+      <connect from_op="Store" from_port="through" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+      <portSpacing port="sink_result 4" spacing="0"/>
+    </process>
+  </operator>
+</process>
