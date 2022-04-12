@@ -1,6 +1,6 @@
 # Predictive Business Analytics
 
-This repository consists of Predictive Business Analytics projects for the course CDS513 - Predictive Business Analytics enrolled as part of Master of Science (Data Science & Analytics) in Universiti Sains Malaysia, Penang.
+This repository consists of Predictive Business Analytics projects for the course CDS513 - Predictive Business Analytics enrolled as part of Master of Science (Data Science & Analytics) during Semester 2 Academic Session 2020/2021 in Universiti Sains Malaysia, Penang.
 
 Works include:
 
